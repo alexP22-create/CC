@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Meniu
+{% endblock title %}
+
+{% block logo %}
+  <a href="/" class="scrollto">Acasă</a>
+{% endblock logo %}
+
+{% block header %}
+  {% if current_user.is_authenticated  %}
+    {% if current_user.rollno == 'admin'  %}
+      <li><a href="/administrator">Înapoi</a></li>
+      <li><a href="/addmenu">Adaugă Produs</a></li>
+      <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+    {% elif current_user.rollno == 'client' %}
+      <li><a href="/client">Înapoi</a></li>
+      <!-- <li><a href="/addmenu">Adauga Produs</a></li> -->
+      <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+    {% elif current_user.rollno == 'ospatar' %}
+      <li><a href="/ospatar">Înapoi</a></li>
+      <!-- <li><a href="/addmenu">Adauga Produs</a></li> -->
+      <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+    {% endif %}
+  {% else %}
+    <li><a href="/menu">Meniu</a></li>
+    <li><a href="/about">Despre</a></li>         
+    <li><a href="/signup">Înregistrare</a></li>
+    <li><a href="/login">Autentificare</a></li>
+  {% endif %}
+{% endblock header %}
+
+{% block intro %}
+    <!-- ======= Intro Section ======= -->
+    <section id="intro">
+      <div class="intro-container" data-aos="zoom-in" data-aos-delay="100">
+        <h1 class="mb-4 pb-0"> Meniu </span> </h1>
+      </div>
+    </section> 
+    <!-- End Intro Section -->
+  {% endblock intro %}
+
+{% block body %}
+  <section id="menu" data-user-id="{{current_user.id if current_user.is_authenticated else 'none'}}">
+    <div class="container">
+
+      <br>
+      <div class="row">
+        {% if current_user.is_authenticated  %}
+          {% if current_user.rollno == 'client'  %}
+            {% for product in query %}
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <img class="card-img-top" src="{{ url_for('static', filename='images/' + product.image) }}" alt="Imagine produs">
+                <div class="card-body">
+                  <h4 class="card-title">{{ product.name }}</h4>
+                  <p class="card-text">{{ product.description }}</p>
+                  <h5>Preț: {{ product.price }}</h5>
+                  <input type="checkbox" id="selectProduct{{product.id}}" class="product-select" name="selectProduct" value="{{product.id}}" data-price="{{product.price}}" data-id="{{product.id}}" data-product-id="{{product.id}}" data-product-name="{{product.name}}" data-user-id="{{current_user.id}}" data-user-name="{{current_user.username}}">
+                  <label for="selectProduct{{product.id}}">Selectează acest produs</label>
+                  <input type="number" id="quantity{{product.id}}" name="quantity" min="1" max="100">
+                  <label for="quantity{{product.id}}">Cantitate</label>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+
+            <br>
+
+            
+            <div>
+              <button type="button" onclick="calculateTotal()">Afișează total plată</button>
+              <h2>Total: <span id="totalPrice">0</span></h2>
+              <button type="button" id="placeOrder">Plasează comanda</button>
+            </div>
+
+            <script>
+              var products = [];  // Array pentru a stoca produsele selectate
+            
+              function calculateTotal() {
+                products = [];  // Resetam lista de produse
+                var total = 0;
+                var checkboxes = document.querySelectorAll('input[name="selectProduct"]:checked');
+                for (var i = 0; i < checkboxes.length; i++) {
+                  var checkbox = checkboxes[i];
+                  var id = checkbox.dataset.id;
+                  var price = parseFloat(checkbox.dataset.price);
+                  var quantity = document.getElementById("quantity" + id).value;
+                  var productName = checkbox.dataset.productName;
+                  var userId = checkbox.dataset.userId;
+                  var userName = checkbox.dataset.userName;
+                  total += price * quantity;
+            
+                  // Adaugam produsul in lista de produse
+                  products.push({
+                    user_id: userId,
+                    user_name: userName,
+                    product_name: productName,
+                    quantity: quantity
+                  });
+                }
+                document.getElementById("totalPrice").innerHTML = total.toFixed(2) + " RON";
+              }
+            
+              function placeOrder() {
+                calculateTotal();  // re-calculate total in case it was not calculated before order placement
+                if (products.length == 0) {
+                  alert("Nu ați selectat niciun produs.");
+                  return;
+                }
+            
+                fetch('/place_order', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(products)
+                })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                  }
+                  return response.json();
+                })
+                .then(data => alert(data.message))
+                .catch((error) => {
+                  console.error('Error:', error);
+                });
+              }
+            
+              document.getElementById("placeOrder").addEventListener("click", placeOrder);
+            </script>
+
+
+          {% elif current_user.rollno == 'admin' %}
+            {% for product in query %}
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <img class="card-img-top" src="{{ url_for('static', filename='images/' + product.image) }}" alt="Imagine produs">
+                <div class="card-body">
+                  <h4 class="card-title">{{ product.name }}</h4>
+                  <p class="card-text">{{ product.description }}</p>
+                  <h5>Preț: {{ product.price }}</h5>
+                  <a href="/deleteproduct/{{product.id}}"><button onclick="return confirm('Ești sigur că vrei să ștergi produsul?');" class="btn btn-danger">Șterge</button> </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+
+          {% else%}
+            {% for product in query %}
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <img class="card-img-top" src="{{ url_for('static', filename='images/' + product.image) }}" alt="Imagine produs">
+                <div class="card-body">
+                  <h4 class="card-title">{{ product.name }}</h4>
+                  <p class="card-text">{{ product.description }}</p>
+                  <h5>Preț: {{ product.price }}</h5>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% endif %}
+        {% else %}
+          {% for product in query %}
+          
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <img class="card-img-top" src="{{ url_for('static', filename='images/' + product.image) }}" alt="Imagine produs">
+              <div class="card-body">
+                <h4 class="card-title">{{ product.name }}</h4>
+                <p class="card-text">{{ product.description }}</p>
+                <h5>Preț: {{ product.price }}</h5>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% endif %}
+
+      </div>
+
+      
+    </div>
+  </section>
+{% endblock body %}

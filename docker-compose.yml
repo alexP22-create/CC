@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  auth:
+    build: ./auth
+    ports:
+      - "81:5001"
+
+  business-logic:
+    build: ./business_logic
+    ports:
+      - "80:5002"
+    depends_on:
+      - auth
+
+  database:
+    build: ./db
+    ports:
+      - "3306:3306"

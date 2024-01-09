@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if current_user.is_authenticated  %}
+    Administrator
+  {% else %}
+    TG
+  {% endif %}
+{% endblock title %}
+
+{% block logo %}
+    <a href="/administrator" class="scrollto">Acasă</a>
+{% endblock logo %}
+
+{% block header %}
+  {% if current_user.is_authenticated  %}
+    <!-- <li><a href="/secretariesdetails">Secretaries Details</a></li>
+    <li><a href="/seriesdetails">Series Details</a></li> -->
+    <li><a href="/clientidetails">Detalii Clienți</a></li>
+    <li><a href="/ospataridetails">Detalii Ospătari</a></li>
+    <li><a href="/menu">Meniu</a></li>
+    <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+  {% else %}          
+    <li><a href="/login">Autentificare</a></li>
+  {% endif %}
+{% endblock header %}
+
+{% block intro %}
+  <!-- ======= Intro Section ======= -->
+  <section id="intro">
+    <div class="intro-container" data-aos="zoom-in" data-aos-delay="100">
+      {% if current_user.is_authenticated  %}
+        <h1 class="mb-4 pb-0"> PAGINĂ ADMINISTRATOR </span> </h1>
+      {% endif %}
+    </div>
+  </section> <!-- End Intro Section -->
+{% endblock intro %}

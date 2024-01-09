@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Despre noi
+{% endblock title %}
+
+{% block logo %}
+  <a href="/" class="scrollto">Acasă</a>
+{% endblock logo %}
+
+{% block header %}
+  <li><a href="/menu">Meniu</a></li>
+  <li><a href="/about">Despre</a></li>
+  {% if current_user.is_authenticated  %}
+    <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+  {% else %}          
+  <li><a href="/signup">Înregistrare</a></li>
+  <li><a href="/login">Autentificare</a></li>
+  {% endif %}
+{% endblock header %}
+
+{% block body %}
+  <section id="despre">
+    <div class="container">
+      <h2 class="display-4 title">Despre noi</h2>
+      <p class="about-us-page">Bine ați venit la Taste Garden, restaurantul nostru care celebrează 
+        tradițiile culinare și diversitatea gastronomică. Înființat în 2013, 
+        ne mândrim cu servirea unor preparate delicioase și autentice, utilizând 
+        doar cele mai proaspete și de cea mai bună calitate ingrediente locale.</p>
+
+      <p>La Taste Garden, ne străduim să creăm o atmosferă caldă și primitoare 
+        pentru toți clienții noștri. Echipa noastră de bucătari experimentați și 
+        personalul prietenos și atent sunt dedicați să vă ofere o experiență 
+        culinară memorabilă. Fie că sunteți în căutarea unei mese relaxante cu 
+        familia sau doriți să sărbătoriți o ocazie specială, Taste Garden este 
+        alegerea perfectă.</p>
+
+      <p>Meniul nostru cuprinde o varietate de preparate atent selecționate, de 
+        la aperitive savuroase până la feluri principale delicioase și deserturi 
+        tentante. De asemenea, oferim o gamă largă de băuturi, inclusiv băuturi 
+        non-alcoolice și alcoolice, pentru a însoți preparatele noastre.</p>
+
+      <p>Vă așteptăm cu drag la Taste Garden pentru a descoperi o experiență 
+        culinară deosebită și pentru a vă bucura de ospitalitatea noastră autentică. 
+        Ne străduim să fim cel mai bun restaurant din oraș, oferindu-vă cele mai 
+        delicioase preparate și un serviciu impecabil. Vă mulțumim că ați ales 
+        Taste Garden și sperăm să vă revedem în curând!</p>
+    </div>
+  </section>
+{% endblock body %}

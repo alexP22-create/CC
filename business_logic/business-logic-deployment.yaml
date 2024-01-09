@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: business-logic-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: business-logic
+  template:
+    metadata:
+      labels:
+        app: business-logic
+    spec:
+      containers:
+      - name: business-logic
+        image: your-registry/business-logic-service:latest
+        ports:
+        - containerPort: 5002
+        env:
+        - name: AUTH_SERVICE_URL
+          value: "http://auth:5001"
