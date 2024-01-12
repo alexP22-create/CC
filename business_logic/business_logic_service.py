@@ -4,21 +4,18 @@ from flask_login import UserMixin
 from sqlalchemy import null
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user,logout_user,login_manager,LoginManager
-from flask_login import login_required,current_user
+from flask_login import login_required
+from flask_login import current_user
+from flask_cors import CORS 
 import json
 
 # MY db connection
 # local_server= True
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.secret_key='kusumachandashwini'
 
-# # this is for getting unique user access
-# login_manager=LoginManager(app)
-# login_manager.login_view='login'
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(int(user_id))
+# enable cors
+CORS(app)
 
 # TO DO:
 app.config['SQLALCHEMY_DATABASE_URI']='mysql://Alex:CloudComp10!@localhost/restaurant'
@@ -252,3 +249,10 @@ def ospataridetails():
 def comenzi():    
     query=Orders.query.all() 
     return render_template('comenzi.html',query=query)
+
+# @app.route('/logout')
+# @login_required
+# def logout():
+    # todo:
+
+app.run(debug=True, port=5001)    
