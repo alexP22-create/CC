@@ -6,6 +6,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY auth_service.py .
+COPY static .
+COPY templates .
 
 EXPOSE 5001
 

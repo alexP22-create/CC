@@ -5,10 +5,14 @@ from sqlalchemy import null
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user,logout_user,login_manager,LoginManager
 from flask_login import login_required,current_user
+from flask_cors import CORS 
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.secret_key='kusumachandashwini'
+
+# enable cors
+CORS(app)
 
 # this is for getting unique user access
 login_manager=LoginManager(app)
@@ -30,11 +34,52 @@ class User(UserMixin,db.Model):
     password=db.Column(db.String(1000))
     rollno=db.Column(db.String(50))
 
+class Ospatar(db.Model):
+    id=db.Column(db.Integer,primary_key=True, autoincrement=True)
+    oname=db.Column(db.String(50))
+    email=db.Column(db.String(50))
+    password=db.Column(db.String(1000))
+
 class Client(db.Model):
     id=db.Column(db.Integer,primary_key=True, autoincrement=True)
     cname=db.Column(db.String(50))
     email=db.Column(db.String(50))
     password=db.Column(db.String(1000))
+
+class Menu(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200))
+    price = db.Column(db.Float, nullable=False)
+    image = db.Column(db.String(100)) # image path
+
+@app.route('/')
+def firstPage():
+    return render_template('firstpage.html')
+
+# @app.route('/menu')
+# def menu():
+    # todo
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/administrator')
+@login_required
+def administrator():
+    return render_template('administrator.html')
+
+@app.route('/client')
+@login_required
+def client():
+    return render_template('client.html')  
+
+@app.route('/ospatar')
+@login_required
+def ospatar():
+    return render_template('ospatar.html')  
 
 @app.route('/login',methods=['POST','GET'])
 def login():
@@ -99,4 +144,4 @@ def logout():
     # flash("Logout SuccessFul","primary")
     return redirect(url_for('login'))
 
-app.run(debug=True) 
+app.run(debug=True, port=5000)
