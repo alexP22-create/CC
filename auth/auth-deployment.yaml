@@ -16,4 +16,4 @@ spec:
       - name: auth
         image: your-registry/auth-service:latest
         ports:
-        - containerPort: 5001
+        - containerPort: 5000

@@ -4,12 +4,12 @@ services:
   auth:
     build: ./auth
     ports:
-      - "81:5001"
+      - "80:5000"
 
   business-logic:
     build: ./business_logic
     ports:
-      - "80:5002"
+      - "81:5001"
     depends_on:
       - auth
 

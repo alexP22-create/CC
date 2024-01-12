@@ -4,18 +4,13 @@ from flask_login import UserMixin
 from sqlalchemy import null
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user,logout_user,login_manager,LoginManager
-from flask_login import login_required
-from flask_login import current_user
-from flask_cors import CORS 
+from flask_login import login_required,current_user
 import json
 
 # MY db connection
-# local_server= True
-app = Flask(__name__, template_folder='templates')
+local_server= True
+app = Flask(__name__, template_folder="templates")
 app.secret_key='kusumachandashwini'
-
-# enable cors
-CORS(app)
 
 # TO DO:
 app.config['SQLALCHEMY_DATABASE_URI']='mysql://Alex:CloudComp10!@localhost/restaurant'
@@ -34,7 +29,7 @@ class Client(db.Model):
     cname=db.Column(db.String(50))
     email=db.Column(db.String(50))
     password=db.Column(db.String(1000))
-    
+
 class Ospatar(db.Model):
     id=db.Column(db.Integer,primary_key=True, autoincrement=True)
     oname=db.Column(db.String(50))
@@ -54,35 +49,6 @@ class Orders(db.Model):
     user_id = db.Column(db.Integer, nullable=False)  # Se presupune că acesta este id-ul clientului
     product_name = db.Column(db.String(100), nullable=False)  # Numele produsului
     quantity = db.Column(db.Integer, nullable=False)
-
-@app.route('/')
-def firstPage():
-    return render_template('firstpage.html')
-
-@app.route('/menu')
-def menu():
-    query = Menu.query.all()
-    return render_template('menu.html', query=query)
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-@app.route('/administrator')
-@login_required
-def administrator():
-    return render_template('administrator.html')
-
-@app.route('/client')
-@login_required
-def client():
-    return render_template('client.html')  
-
-@app.route('/ospatar')
-@login_required
-def ospatar():
-    return render_template('ospatar.html')  
 
 @app.route('/place_order', methods=['POST'])
 def place_order():
@@ -108,7 +74,6 @@ def place_order():
     return jsonify({'message': 'Comanda a fost plasată cu succes.'})
 
 @app.route('/addmenu', methods=['POST', 'GET'])
-@login_required
 def addmenu():
     if request.method == "POST":
         name=request.form.get('name')
@@ -124,7 +89,6 @@ def addmenu():
 
 
 @app.route('/addclient',methods=['POST','GET'])
-@login_required
 def addclient():
     if request.method=="POST":
         cname=request.form.get('cname')
@@ -148,7 +112,6 @@ def addclient():
 
 
 @app.route('/addospatar',methods=['POST','GET'])
-@login_required
 def addospatar():
     if request.method=="POST":
         oname=request.form.get('oname')
@@ -171,7 +134,6 @@ def addospatar():
     return render_template('addospatar.html')
 
 @app.route("/deleteospatar/<string:email>",methods=['POST','GET'])
-@login_required
 def deleteospatar(email):
     ospatar = Ospatar.query.filter_by(email=email).first()
     user = User.query.filter_by(email=email).first()
@@ -187,7 +149,6 @@ def deleteospatar(email):
     return redirect('/ospataridetails')
 
 @app.route("/deleteclient/<string:email>",methods=['POST','GET'])
-@login_required
 def deleteclient(email):
     client = Client.query.filter_by(email=email).first()
     user = User.query.filter_by(email=email).first()
@@ -207,7 +168,6 @@ def deleteclient(email):
     return redirect('/clientidetails')
 
 @app.route("/deleteproduct/<string:id>",methods=['POST','GET'])
-@login_required
 def deleteproduct(id):
     product = Menu.query.filter_by(id=id).first()
     if product is not None:
@@ -222,7 +182,6 @@ def deleteproduct(id):
     return redirect('/menu')
 
 @app.route("/deletecomanda/<string:id>",methods=['POST','GET'])
-@login_required
 def deletecomanda(id):
     order = Orders.query.filter_by(id=id).first()
     if order is not None:
@@ -233,26 +192,18 @@ def deletecomanda(id):
     return redirect('/comenzi')
 
 @app.route('/clientidetails')
-@login_required
 def clientidetails():
     query=Client.query.all() 
     return render_template('clientidetails.html',query=query)
 
 @app.route('/ospataridetails')
-@login_required
 def ospataridetails():    
     query=Ospatar.query.all() 
     return render_template('ospataridetails.html',query=query)
 
 @app.route('/comenzi')
-@login_required
 def comenzi():    
     query=Orders.query.all() 
     return render_template('comenzi.html',query=query)
-
-# @app.route('/logout')
-# @login_required
-# def logout():
-    # todo:
 
 app.run(debug=True, port=5001)    

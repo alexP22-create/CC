@@ -9,6 +9,6 @@ COPY business_logic_service.py .
 COPY static .
 COPY templates .
 
-EXPOSE 5002
+EXPOSE 5001
 
 CMD ["python", "business_logic_service.py"]

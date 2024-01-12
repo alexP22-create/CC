@@ -1,18 +1,23 @@
 from flask import Flask,render_template,request,session,redirect,url_for,flash,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+import requests
 from sqlalchemy import null
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user,logout_user,login_manager,LoginManager
 from flask_login import login_required,current_user
-from flask_cors import CORS 
 import json
 
-app = Flask(__name__, template_folder='templates')
+# MY db connection
+local_server= True
+app = Flask(__name__, template_folder="templates")
 app.secret_key='kusumachandashwini'
 
-# enable cors
-CORS(app)
+# business microservice url
+business_url = "https://127.0.0.1:5001/"
+
+# headers
+headers = {'Content-Type': 'application/json'}
 
 # this is for getting unique user access
 login_manager=LoginManager(app)
@@ -34,15 +39,15 @@ class User(UserMixin,db.Model):
     password=db.Column(db.String(1000))
     rollno=db.Column(db.String(50))
 
-class Ospatar(db.Model):
-    id=db.Column(db.Integer,primary_key=True, autoincrement=True)
-    oname=db.Column(db.String(50))
-    email=db.Column(db.String(50))
-    password=db.Column(db.String(1000))
-
 class Client(db.Model):
     id=db.Column(db.Integer,primary_key=True, autoincrement=True)
     cname=db.Column(db.String(50))
+    email=db.Column(db.String(50))
+    password=db.Column(db.String(1000))
+
+class Ospatar(db.Model):
+    id=db.Column(db.Integer,primary_key=True, autoincrement=True)
+    oname=db.Column(db.String(50))
     email=db.Column(db.String(50))
     password=db.Column(db.String(1000))
 
@@ -53,13 +58,21 @@ class Menu(db.Model):
     price = db.Column(db.Float, nullable=False)
     image = db.Column(db.String(100)) # image path
 
+class Orders(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)  # Se presupune că acesta este id-ul clientului
+    product_name = db.Column(db.String(100), nullable=False)  # Numele produsului
+    quantity = db.Column(db.Integer, nullable=False)
+
 @app.route('/')
 def firstPage():
     return render_template('firstpage.html')
 
-# @app.route('/menu')
-# def menu():
-    # todo
+@app.route('/menu')
+def menu():
+    query = Menu.query.all()
+    return render_template('menu.html', query=query)
 
 
 @app.route('/about')
@@ -80,6 +93,94 @@ def client():
 @login_required
 def ospatar():
     return render_template('ospatar.html')  
+
+@app.route('/place_order', methods=['POST'])
+def place_order():
+    data = request.get_json()
+    url = business_url + 'place_order'
+    response = requests.post(url, json=data)
+    return response.text
+
+@app.route('/addmenu', methods=['POST', 'GET'])
+@login_required
+def addmenu():
+    if request.method == "POST":
+        data = request.get_json()
+        url = business_url + 'addmenu'
+        response = requests.post(url, json=data)
+        return response.text
+    return render_template('addmenu.html')
+
+
+@app.route('/addclient',methods=['POST','GET'])
+@login_required
+def addclient():
+    if request.method=="POST":
+        data = request.get_json()
+        url = business_url + 'addclient'
+        response = requests.post(url, json=data)
+        return response.text
+    return render_template('addclient.html')
+
+
+@app.route('/addospatar',methods=['POST','GET'])
+@login_required
+def addospatar():
+    if request.method=="POST":
+        data = request.get_json()
+        url = business_url + 'addospatar'
+        response = requests.post(url, json=data)
+        return response.text
+    return render_template('addospatar.html')
+
+@app.route("/deleteospatar/<string:email>",methods=['POST','GET'])
+@login_required
+def delete_ospatar(email):
+    data = request.get_json()
+    url = business_url + f'deleteospatar/{email}'
+    requests.post(url, json=data)
+    return redirect('/ospataridetails')
+
+@app.route("/deleteclient/<string:email>",methods=['POST','GET'])
+@login_required
+def deleteclient(email):
+    url = business_url + f'deleteclient/{email}'
+    requests.post(url)
+    return redirect('/clientidetails')
+
+@app.route("/deleteproduct/<string:id>",methods=['POST','GET'])
+@login_required
+def deleteproduct(id):
+    data = request.get_json()
+    url = business_url + f'deleteproduct/{id}'
+    requests.post(url, json=data)
+    return redirect('/menu')
+
+@app.route("/deletecomanda/<string:id>",methods=['POST','GET'])
+@login_required
+def deletecomanda(id):
+    data = request.get_json()
+    url = business_url + f'deletecomanda/{id}'
+    requests.post(url, json=data)
+    return redirect('/comenzi')
+
+@app.route('/clientidetails')
+@login_required
+def clientidetails():
+    query=Client.query.all() 
+    return render_template('clientidetails.html',query=query)
+
+@app.route('/ospataridetails')
+@login_required
+def ospataridetails():    
+    query=Ospatar.query.all() 
+    return render_template('ospataridetails.html',query=query)
+
+@app.route('/comenzi')
+@login_required
+def comenzi():    
+    query=Orders.query.all() 
+    return render_template('comenzi.html',query=query)
 
 @app.route('/login',methods=['POST','GET'])
 def login():
@@ -144,4 +245,4 @@ def logout():
     # flash("Logout SuccessFul","primary")
     return redirect(url_for('login'))
 
-app.run(debug=True, port=5000)
+app.run(debug=True, port=5000)    
