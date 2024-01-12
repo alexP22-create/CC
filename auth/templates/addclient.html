@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}
+Adaugă Client
+{% endblock title %}
+
+{% block logo %}
+    <a href="/administrator" class="scrollto">TG</a>
+{% endblock logo %}
+
+{% block header %}
+  {% if current_user.is_authenticated  %}
+    <li><a href="/clientidetails">Înapoi</a></li>
+    <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+  {% endif %}
+
+{% endblock header %}
+
+
+
+
+{% block intro %}
+
+
+  <!-- ======= Intro Section ======= -->
+  <section id="intro">
+    <div class="intro-container" data-aos="zoom-in" data-aos-delay="100">
+
+    <h2 style="color:rgb(14, 68, 72);-webkit-text-stroke: 0.4px #fff; font-size: 45px;" class="text-center"><span><b><b>Adaugă Client</b></b></span> </h2>
+      
+    {% with messages=get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+
+    <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+        {{message}}
+
+
+    </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    <br>
+    <div class="container text-white">
+
+      <div class="row">
+
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+
+      <form action="/addclient" method="post">
+      <div class="form-group">
+
+      <label for="cname">Nume Client</label>
+      <input type="text" class="form-control" name="cname" id="cname">
+      </div>
+      <br>
+      <div class="form-group">
+
+      <label for="email">Email</label>
+      <input type="email" class="form-control" name="email" id="email">
+      </div>
+      <br>
+
+      <div class="form-group">
+        <label for="exampleInputPassword1" >Parolă</label>
+        <input type="password" class="form-control mb-2" name="password" id="exampleInputPassword1" required>
+      </div>
+        
+        <button type="submit" style="background-color:rgb(14, 68, 72)" class="btn btn-sm btn-block text-white">Adaugă</button>
+      </form>
+      <br>
+      <br>
+
+      </div>
+
+      <div class="col-md-4"></div>
+
+      </div>
+    </div>
+
+
+
+    </div>
+  </section> <!-- End Intro Section -->
+
+{% endblock intro %}

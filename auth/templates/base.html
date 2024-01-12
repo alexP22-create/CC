@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>{% block title %}
+  {% endblock title %}</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  {% block style %}
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  {% endblock style %}
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/venobox/venobox.css" rel="stylesheet">
+  <link href="static/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="static/assets/css/style.css" rel="stylesheet">
+
+  <!-- Drag and Drop JS File -->
+  {% block draganddrop %}
+  {% endblock draganddrop %}
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="container">
+
+      <div id="logo" class="pull-left">
+        {% block logo %}
+        {% endblock logo %} 
+      </div>
+
+      <nav id="nav-menu-container">
+        <ul class="nav-menu">
+          {% block header %}
+          {% endblock header %}
+        </ul>
+      </nav><!-- #nav-menu-container -->
+
+
+    </div>
+  </header><!-- End Header -->
+
+  {% block intro %}
+    <!-- ======= Intro Section ======= -->
+    <section id="intro">
+      <div class="intro-container" data-aos="zoom-in" data-aos-delay="100">
+        {% if current_user.is_authenticated  %}
+        {% else %}
+          <h1 class="mb-4 pb-0"> Taste Garden </span> </h1>
+        {% endif %}
+      </div>
+    </section> 
+    <!-- End Intro Section -->
+  {% endblock intro %}
+
+  {% block body %}
+  {% endblock body %}
+
+
+  <a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+  <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="static/assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+  <script src="static/assets/vendor/php-email-form/validate.js"></script>
+  <script src="static/assets/vendor/venobox/venobox.min.js"></script>
+  <script src="static/assets/vendor/owl.carousel/owl.carousel.min.js"></script>
+  <script src="static/assets/vendor/superfish/superfish.min.js"></script>
+  <script src="static/assets/vendor/hoverIntent/hoverIntent.js"></script>
+  <script src="static/assets/vendor/aos/aos.js"></script>
+  
+
+  <!-- Template Main JS File -->
+  <script src="static/assets/js/main.js"></script>
+
+</body>
+
+</html>

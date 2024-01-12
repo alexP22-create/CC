@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if current_user.is_authenticated  %}
+    Administrator
+  {% else %}
+    TG
+  {% endif %}
+{% endblock title %}
+
+{% block logo %}
+  <a href="/" class="scrollto">Acasă</a>
+{% endblock logo %}
+
+{% block header %}
+  <li><a href="/menu">Meniu</a></li>
+  <li><a href="/about">Despre</a></li>  
+  {% if current_user.is_authenticated  %}
+    <li class="buy-tickets"><a href="/logout">Deconectare</a></li>
+  {% else %}          
+    <li><a href="/signup">Înregistrare</a></li>
+    <li><a href="/login">Autentificare</a></li>
+  {% endif %}
+{% endblock header %}
+
+{% block intro %}
+  <!-- ======= Intro Section ======= -->
+  <section id="intro">
+    <div class="intro-container" data-aos="zoom-in" data-aos-delay="100">
+        <h1 class="mb-4 pb-0"> Taste Garden </span> </h1>
+    </div>
+  </section> <!-- End Intro Section -->
+{% endblock intro %}
