@@ -17,3 +17,8 @@ services:
     build: ./db
     ports:
       - "3306:3306"
+  
+  db-management:
+    build: ./db-management
+    ports:
+      - "8080:8080"  # Expose a different port for db-management if needed
