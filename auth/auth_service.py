@@ -14,7 +14,7 @@ app = Flask(__name__, template_folder="templates")
 app.secret_key='kusumachandashwini'
 
 # business microservice url
-business_url = "https://127.0.0.1:5001/"
+business_url = "http://127.0.0.1:5001/"
 
 # headers
 headers = {'Content-Type': 'application/json'}
@@ -96,19 +96,18 @@ def ospatar():
 
 @app.route('/place_order', methods=['POST'])
 def place_order():
-    data = request.get_json()
+    data = request.form.to_dict()
     url = business_url + 'place_order'
-    response = requests.post(url, json=data)
+    response = requests.post(url, data=data)
     return response.text
 
 @app.route('/addmenu', methods=['POST', 'GET'])
 @login_required
 def addmenu():
     if request.method == "POST":
-        data = request.get_json()
+        data = request.form.to_dict()
         url = business_url + 'addmenu'
-        response = requests.post(url, json=data)
-        return response.text
+        requests.post(url, data=data)
     return render_template('addmenu.html')
 
 
@@ -116,10 +115,9 @@ def addmenu():
 @login_required
 def addclient():
     if request.method=="POST":
-        data = request.get_json()
+        data = request.form.to_dict()
         url = business_url + 'addclient'
-        response = requests.post(url, json=data)
-        return response.text
+        requests.post(url, data=data)
     return render_template('addclient.html')
 
 
@@ -127,18 +125,17 @@ def addclient():
 @login_required
 def addospatar():
     if request.method=="POST":
-        data = request.get_json()
+        data = request.form.to_dict()
         url = business_url + 'addospatar'
-        response = requests.post(url, json=data)
-        return response.text
+        requests.post(url, data=data)
     return render_template('addospatar.html')
 
 @app.route("/deleteospatar/<string:email>",methods=['POST','GET'])
 @login_required
 def delete_ospatar(email):
-    data = request.get_json()
+    data = request.form.to_dict()
     url = business_url + f'deleteospatar/{email}'
-    requests.post(url, json=data)
+    requests.post(url, data=data)
     return redirect('/ospataridetails')
 
 @app.route("/deleteclient/<string:email>",methods=['POST','GET'])
@@ -151,17 +148,17 @@ def deleteclient(email):
 @app.route("/deleteproduct/<string:id>",methods=['POST','GET'])
 @login_required
 def deleteproduct(id):
-    data = request.get_json()
+    data = request.form.to_dict()
     url = business_url + f'deleteproduct/{id}'
-    requests.post(url, json=data)
+    requests.post(url, data=data)
     return redirect('/menu')
 
 @app.route("/deletecomanda/<string:id>",methods=['POST','GET'])
 @login_required
 def deletecomanda(id):
-    data = request.get_json()
+    data = request.form.to_dict()
     url = business_url + f'deletecomanda/{id}'
-    requests.post(url, json=data)
+    requests.post(url, data=data)
     return redirect('/comenzi')
 
 @app.route('/clientidetails')
