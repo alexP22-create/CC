@@ -14,9 +14,16 @@ spec:
     spec:
       containers:
       - name: portainer
-        image: portainer/portainer-ce:latest
+        image: portainer/portainer-ce:latest # Sau "my-custom-portainer" dacă ai construit o imagine personalizată
         ports:
-        - containerPort: 9000
-        env:
-        - name: ADMIN_PASSWORD
-          value: "CloudComp10!"  # Set a secure admin password
+        - containerPort: 30090
+        volumeMounts:
+        - mountPath: /data
+          name: portainer-data
+      imagePullSecrets:
+      - name: auth-secret
+      volumes:
+      - name: portainer-data
+        emptyDir: {}
+
+

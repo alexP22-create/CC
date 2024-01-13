@@ -1,19 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: database-deployment
+  name: db-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: database
+      app: db-app
   template:
     metadata:
       labels:
-        app: database
+        app: db-app
     spec:
       containers:
-      - name: database
-        image: your-registry/database-service:latest
+      - name: db-app
+        image: alex22docker/db:latest
         ports:
         - containerPort: 3306
+      imagePullSecrets:
+      - name: auth-secret

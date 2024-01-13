@@ -3,20 +3,20 @@ kind: Deployment
 metadata:
   name: business-logic-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: business-logic
+      app: business-logic-app
   template:
     metadata:
       labels:
-        app: business-logic
+        app: business-logic-app
     spec:
       containers:
-      - name: business-logic
-        image: your-registry/business-logic-service:latest
+      - name: business-logic-app
+        image: alex22docker/business_logic:latest
         ports:
         - containerPort: 5001
-        env:
-        - name: AUTH_SERVICE_URL
-          value: "http://auth:5000"
+      imagePullSecrets:
+      - name: auth-secret
+

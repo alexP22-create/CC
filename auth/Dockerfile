@@ -9,6 +9,6 @@ COPY auth_service.py .
 COPY static .
 COPY templates .
 
-EXPOSE 5000
+EXPOSE 30091
 
 CMD ["python", "auth_service.py"]

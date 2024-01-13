@@ -1,19 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-management-deployment
+  name: phpmyadmin-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db-management
+      app: phpmyadmin
   template:
     metadata:
       labels:
-        app: db-management
+        app: phpmyadmin
     spec:
       containers:
-      - name: db-management
-        image: your-registry/db-management-service:latest
+      - name: phpmyadmin
+        image: alex22docker/db-management:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 30080
+      imagePullSecrets:
+      - name: auth-secret
+
+

@@ -3,9 +3,12 @@ kind: Service
 metadata:
   name: business-logic-service
 spec:
+  type: ClusterIP
   selector:
-    app: business-logic
+    app: business-logic-app
   ports:
     - protocol: TCP
-      port: 81
+      port: 5001
       targetPort: 5001
+
+
