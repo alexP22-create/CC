@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: portainer-service
+spec:
+  selector:
+    app: portainer
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: LoadBalancer  # Use LoadBalancer type if your Kubernetes cluster supports it, otherwise use NodePort

@@ -1,24 +1,24 @@
-version: '3'
+# version: '3'
+                                                              # USELESS FOR KUBERNETES
+# services:
+#   auth:
+#     build: ./auth
+#     ports:
+#       - "80:5000"
 
-services:
-  auth:
-    build: ./auth
-    ports:
-      - "80:5000"
+#   business-logic:
+#     build: ./business_logic
+#     ports:
+#       - "81:5001"
+#     depends_on:
+#       - auth
 
-  business-logic:
-    build: ./business_logic
-    ports:
-      - "81:5001"
-    depends_on:
-      - auth
-
-  database:
-    build: ./db
-    ports:
-      - "3306:3306"
+#   database:
+#     build: ./db
+#     ports:
+#       - "3306:3306"
   
-  db-management:
-    build: ./db-management
-    ports:
-      - "8080:8080"  # Expose a different port for db-management if needed
+#   db-management:
+#     build: ./db-management
+#     ports:
+#       - "8080:8080"  # Expose a different port for db-management if needed
