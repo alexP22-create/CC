@@ -13,7 +13,7 @@ app = Flask(__name__, template_folder="templates")
 app.secret_key='kusumachandashwini'
 
 # TO DO:
-app.config['SQLALCHEMY_DATABASE_URI']='mysql://Alex:CloudComp10!@localhost/restaurant'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql://Alex:CloudComp10!@db-app/restaurant'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -206,4 +206,4 @@ def comenzi():
     query=Orders.query.all() 
     return render_template('comenzi.html',query=query)
 
-app.run(debug=True, port=5001)    
+app.run(host='0.0.0.0', debug=True, port=5001)    

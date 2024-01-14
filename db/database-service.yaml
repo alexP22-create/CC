@@ -1,7 +1,8 @@
+database-service.yaml:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-service
+  name: db-app
 spec:
   type: ClusterIP
   selector:

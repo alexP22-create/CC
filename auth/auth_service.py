@@ -28,7 +28,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # TO DO:
-app.config['SQLALCHEMY_DATABASE_URI']='mysql://Alex:CloudComp10!@localhost/restaurant'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://Alex:CloudComp10!@db-app/restaurant'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -242,4 +242,4 @@ def logout():
     # flash("Logout SuccessFul","primary")
     return redirect(url_for('login'))
 
-app.run(debug=True, port=5000)    
+app.run(host='0.0.0.0', debug=True, port=5000)

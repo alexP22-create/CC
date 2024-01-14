@@ -1,99 +1,75 @@
-TODO:
+==============================      README     ===================================
 
-- 3 servicii pe ac network functionale          X
-- comunicare prin request-uri
-- verif ca merg
-- ad serviciu pt management baza de date
-- alte cerinte
-- networkuri diferite si 1 cp cu 2 workeri
-- deployat
+    Aplicatie web care ajuta la gestionarea unui restaurant. Este destinata pentru 
+trei tipuri de utilizatori: administrator, client si ospatar. Administratorul
+poate gestiona conturile de client si ospatar si poate modifica meniul. 
+Clientul poate selecta produsele dorite, sa vada totalul de plata, iar apoi
+sa trimita comanda. Ospatarul poate vedea comenzile clientilor si le poate 
+gestiona, iar in cazul in care clientul nu doreste sa-si faca cont, ospatarul
+ii poate prelua comanda din contul sau.
 
-- terraform, alte bonusuri
+    Aplicatia noastra contine 5 servicii:
+        -> serviciul de autentificare
+        -> serviciul de business logic
+        -> serviciul de baza de date ce ruleaza scriptul numit restaurant.sql
+    ce creeaza baza de date si se ruleaza intr-un container de MySql.
+        -> serviciul de management al bazei de date, ce utilizeaza phpmyadmin
+        -> portainer pt managementul clusterului
 
+    Serviciile de autentificare si business logic sunt scrise in python flask,
+comunica prin cereri http requests(post, get, etc.) si sunt conectate la baza de date.
+    Tehnologii folosite: Python Flask, MySql, Bootstrap, Html, CSS, Javascript, 
+Kubernetes, Docker, Grafana, Terraform.
 
-====================   Steps rulare Docker + Kubernetes application:  ===========================
+    Pasi deploy si rulare folosind docker, kubernetes si minikube:
+    0) Creare aplicatie web si verficarea locala a acesteia
+        - creare frontend
+        - creare route backend
+        - creare baza de date in MySql si legarea la backend
+        - testare locala a functionalitatilor
+        - impartirea pe servicii ce comunica prin cereri http 
 
-1) pt fiecare serviciu trb sa creez imaginile de Docker(care sunt manageuite de K8)
-cd your-auth-service
-docker login -u your-dockerhub-username
-docker build -t your-registry/your-auth-service:latest .
-docker tag your-registry/your-auth-service:latest your-registry/your-auth-service:v1.0
-docker push your-registry/your-auth-service:v1.0
+    1) Creare Dockerfile-uri si fisiere .yaml pentru configuratiile de Kubernetes
+        - Dockerfile
+        - nume-deployment.yaml
+        - nume-service.yaml
 
-docker tag local-image:tagname new-repo:tagname
-docker push new-repo:tagname
+    2) Ex creare imaginini docker, update, eliberare de porturi si incarcare pe docker hub
+        docker login -u "myusername" -p "mypassword" docker.io
+        docker build -t alex22docker/auth:latest .
+        docker build --no-cache -t alex22docker/auth:latest .
+        docker ps -> extragere id
+        docker stop <id>
+        docker tag auth:latest alex22docker/auth:latest                                                  
+        docker push alex22docker/auth:latest
+    
+    3) Pregatirea environmentului si pornire cluster
+        Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Tools-All -All
+        $Env:DOCKER_TLS_VERIFY = "1"
+        $Env:DOCKER_HOST = "tcp://172.24.243.89:2376"
+        $Env:DOCKER_CERT_PATH = "C:\Users\alexp.minikube\certs"
+        $Env:MINIKUBE_ACTIVE_DOCKERD = "cluster-multinod"
+        minikube -p cluster-multinod docker-env --shell powershell
+        minikube start --nodes 3 -p cluster-multinod
 
-2) Deploying on Kubernetes:
-- Make sure you have a running Kubernetes cluster.
-- Ensure that kubectl is configured to connect to your Kubernetes cluster.
+    4) Creare secrete si aplicare configuratii kubernetes
+        kubectl create secret docker-registry auth-secret --docker-server=docker.io 
+    --docker-username=alex22docker --docker-password=<password> --docker-email=<email>
+        kubectl apply -f auth-deployment.yaml
+        kubectl apply -f auth-service.yaml
+        ...
 
-3) Aplica conf de K8 pt fiecare serv:
-Ex:
-kubectl apply -f auth-service.yaml
-kubectl apply -f auth-deployment.yaml
+    5) Verificare imaginilor de docker
+        docker run -p port:port alex22docker/auth:latest
+        ...
 
--> acum ar trb sa se porneasca aplicatia
+    6) Pornire cluster si verificare
+        minikube start --nodes 3 -p cluster-multinod
+        kubectl get deployments
+        kubectl get services
+        kubectl get pods
+        kubectl describe pod <pod name>
+        kubectl logs pod <pod name>
 
-4) Verif deployments:
-kubectl get deployments
-kubectl get pods
-kubectl get services
-
-5) Monitor Deployment:
-kubectl get deployments
-kubectl get pods
-kubectl get services
-Ensure that the desired number of replicas are running for each service.
-
-6) Expose Services:
-If your services are designed to be externally accessible, expose them using kubectl expose or create an Ingress resource. For example:
-kubectl expose deployment auth-deployment --type=LoadBalancer --name=auth-service
-
-7) Verify External Access:
-kubectl get services
-Access your services in a web browser or using other tools, using the provided external IP or hostname.
-
-8) Debugging and Monitoring:
-kubectl logs pod-name
-kubectl describe pod pod-name
-
-9). Scale or Update:
-kubectl scale deployment auth-deployment --replicas=3
-kubectl set image deployment/auth-deployment auth-container=new-image:tag
-
-
-==============================================================
-
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Tools-All -All
-
-$Env:DOCKER_TLS_VERIFY = "1"
-$Env:DOCKER_HOST = "tcp://172.24.243.89:2376"
-$Env:DOCKER_CERT_PATH = "C:\Users\alexp.minikube\certs"
-$Env:MINIKUBE_ACTIVE_DOCKERD = "cluster-multinod"
-
-minikube delete -p cluster-multinod --All
-Restart-Service vmms
-
-& minikube -p cluster-multinod docker-env --shell powershell | Invoke-Expression
-minikube -p cluster-multinod docker-env --shell powershell
-minikube start --nodes 3 -p cluster-multinod
-minikube start --nodes 3 --memory 4096 -p cluster-multinod
-docker ps
-
-kubectl config set-credentials cluster-multinod
-
-
-docker login -u "myusername" -p "mypassword" docker.io
-docker build -t phpmyadmin-personalizat .
-docker tag auth:latest alex22docker/auth:latest                                                  
-docker push alex22docker/auth:latest
-
-kubectl apply -f phpmyadmin-deployment.yaml
-kubectl apply -f phpmyadmin-service.yaml
-
-Pornire cluster:
-minikube start --nodes 3 -p cluster-multinod
-Accesare servicii:
-minikube service phpmyadmin-service -p cluster-multinod
-
-kubectl create secret docker-registry auth-secret --docker-server=docker.io --docker-username=alex22docker --docker-password=CloudComp10! --docker-email=alexpostolache17@gmail.com
+    7) Accesare servicii
+        minikube service phpmyadmin-service -p cluster-multinod

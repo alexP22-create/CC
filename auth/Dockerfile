@@ -6,9 +6,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY auth_service.py .
-COPY static .
-COPY templates .
+COPY static static/
+COPY templates templates/
 
-EXPOSE 30091
+EXPOSE 5000
 
 CMD ["python", "auth_service.py"]
