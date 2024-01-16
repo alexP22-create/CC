@@ -17,6 +17,15 @@ spec:
         image: alex22docker/business_logic:latest
         ports:
         - containerPort: 5001
-      imagePullSecrets:
-      - name: auth-secret
+        env:
+          - name: DB_HOST
+            value: "db-app"
+          - name: DB_PORT
+            value: "3306"
+          - name: DB_USER
+            value: "Alex"
+          - name: DB_PASSWORD
+            value: "CloudComp10!"
+        imagePullSecrets:
+        - name: auth-secret
 

@@ -12,8 +12,17 @@ local_server= True
 app = Flask(__name__, template_folder="templates")
 app.secret_key='kusumachandashwini'
 
-# TO DO:
-app.config['SQLALCHEMY_DATABASE_URI']='mysql://Alex:CloudComp10!@db-app/restaurant'
+# Accessing environment variables
+db_host = os.environ.get('DB_HOST', 'localhost')
+db_port = os.environ.get('DB_PORT', '3306')
+db_user = os.environ.get('DB_USER', 'admin')
+db_password = os.environ.get('DB_PASSWORD', 'admin123')
+business_port = os.environ.get('BUSINESS_PORT', '5001')
+
+# Constructing the database connection string
+db_uri = f"mysql://{db_user}:{db_password}@{db_host}:{db_port}/restaurant"
+
+app.config['SQLALCHEMY_DATABASE_URI']=db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 

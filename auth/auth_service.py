@@ -1,20 +1,18 @@
 from flask import Flask,render_template,request,session,redirect,url_for,flash,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-import requests
 from sqlalchemy import null
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user,logout_user,login_manager,LoginManager
 from flask_login import login_required,current_user
 import json
+import requests
+import os
 
 # MY db connection
 local_server= True
 app = Flask(__name__, template_folder="templates")
 app.secret_key='kusumachandashwini'
-
-# business microservice url
-business_url = "http://127.0.0.1:5001/"
 
 # headers
 headers = {'Content-Type': 'application/json'}
@@ -27,8 +25,20 @@ login_manager.login_view='login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# TO DO:
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://Alex:CloudComp10!@db-app/restaurant'
+# Accessing environment variables
+db_host = os.environ.get('DB_HOST', 'localhost')
+db_port = os.environ.get('DB_PORT', '3306')
+db_user = os.environ.get('DB_USER', 'admin')
+db_password = os.environ.get('DB_PASSWORD', 'admin123')
+business_port = os.environ.get('BUSINESS_PORT', '5001')
+
+# business microservice url contains business container port
+business_url = "http://127.0.0.1:" + business_port + "/"
+
+# Constructing the database connection string
+db_uri = f"mysql://{db_user}:{db_password}@{db_host}:{db_port}/restaurant"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 

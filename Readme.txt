@@ -1,3 +1,7 @@
+POSTOLACHE Alexandru-Gabriel EGOV1-B
+BUZDUGAN Mihaela EGOV1-A
+MEGELEA Diana-Mihaela SCPD2
+
 ==============================      README     ===================================
 
     Aplicatie web care ajuta la gestionarea unui restaurant. Este destinata pentru 
@@ -73,3 +77,10 @@ Kubernetes, Docker, Grafana, Terraform.
 
     7) Accesare servicii
         minikube service phpmyadmin-service -p cluster-multinod
+
+    8) Grafana:
+    kubectl apply -f persistent-volume.yaml
+    kubectl apply -f grafana-deployment.yaml
+    kubectl apply -f grafana-service.yaml
+    kubectl get deployments
+    minikube service grafana
